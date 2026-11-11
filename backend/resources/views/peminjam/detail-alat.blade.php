@@ -6,10 +6,10 @@
 @section('content')
     <div class="max-w-2xl bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
         <div class="p-5">
-            @if($alat->gambar)
+            @if($alat->gambar_url)
                 <div class="w-full h-72 md:h-80 rounded-lg border border-gray-200 bg-white mb-6 p-3">
                     <img
-                        src="{{ asset('storage/' . preg_replace('#^(?:public/)?storage/#', '', $alat->gambar)) }}"
+                        src="{{ $alat->gambar_url }}"
                         alt="{{ $alat->nama_alat }}"
                         class="w-full h-full object-contain"
                     >

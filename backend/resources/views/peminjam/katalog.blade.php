@@ -93,9 +93,9 @@
 
                             <td class="py-2 px-3 border-b border-gray-100">
 
-                                @if($item->gambar)
+                                @if($item->gambar_url)
                                     <img
-                                        src="{{ asset('storage/' . preg_replace('#^(?:public/)?storage/#', '', $item->gambar)) }}"
+                                        src="{{ $item->gambar_url }}"
                                         alt="{{ $item->nama_alat }}"
                                         class="w-12 h-12 object-contain rounded-lg border border-gray-200 bg-white p-1"
                                     >

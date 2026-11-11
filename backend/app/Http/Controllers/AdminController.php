@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\DB;
 use App\Models\LogAktivitas;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
 
 class AdminController extends Controller
 {
@@ -67,7 +68,7 @@ class AdminController extends Controller
     // Menyimpan alat baru
     public function storeAlat(Request $request)
     {
-        $request->validate([
+        $data = $request->validate([
             'nama_alat' => 'required|string|max:255',
             'kategori_id' => 'required|exists:kategori,id',
             'stok' => 'required|integer|min:0',
@@ -76,14 +77,8 @@ class AdminController extends Controller
             'gambar' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
         ]);
 
-        $data = $request->except('gambar');
-
-        // Handle Upload Gambar jika ada
-        if ($request->hasFile('gambar')) {
-            $file = $request->file('gambar');
-            $filename = time() . '_' . $file->getClientOriginalName();
-            $file->move(public_path('storage/alat'), $filename);
-            $data['gambar'] = 'storage/alat/' . $filename;
+        if (isset($data['gambar'])) {
+            $data['gambar'] = $data['gambar']->store('alat', 'public');
         }
 
         Alat::create($data);
@@ -104,7 +99,7 @@ class AdminController extends Controller
     {
         $alat = Alat::findOrFail($id);
 
-        $request->validate([
+        $data = $request->validate([
             'nama_alat' => 'required|string|max:255',
             'kategori_id' => 'required|exists:kategori,id',
             'stok' => 'required|integer|min:0',
@@ -113,22 +108,16 @@ class AdminController extends Controller
             'gambar' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
         ]);
 
-        $data = $request->all();
-
-        // Handle Update Gambar jika ada file baru
-        if ($request->hasFile('gambar')) {
-            // Hapus gambar lama jika ada
-            if ($alat->gambar && file_exists(public_path($alat->gambar))) {
-                unlink(public_path($alat->gambar));
-            }
-
-            $file = $request->file('gambar');
-            $filename = time() . '_' . $file->getClientOriginalName();
-            $file->move(public_path('storage/alat'), $filename);
-            $data['gambar'] = 'storage/alat/' . $filename;
+        $oldImage = $alat->gambar;
+        if (isset($data['gambar'])) {
+            $data['gambar'] = $data['gambar']->store('alat', 'public');
         }
 
         $alat->update($data);
+
+        if ($oldImage && $oldImage !== $alat->gambar) {
+            $this->deleteAlatImage($oldImage);
+        }
 
         return redirect()->route('admin.alat.index')->with('success', 'Data alat berhasil diperbarui.');
     }
@@ -138,14 +127,29 @@ class AdminController extends Controller
     {
         $alat = Alat::findOrFail($id);
 
-        // Hapus file gambar fisik jika ada
-        if ($alat->gambar && file_exists(public_path($alat->gambar))) {
-            unlink(public_path($alat->gambar));
-        }
-
+        $oldImage = $alat->gambar;
         $alat->delete();
 
+        if ($oldImage) {
+            $this->deleteAlatImage($oldImage);
+        }
+
         return redirect()->route('admin.alat.index')->with('success', 'Data alat berhasil dihapus.');
+    }
+
+    private function deleteAlatImage(string $path): void
+    {
+        $path = preg_replace('#^(?:public/)?storage/#', '', $path);
+
+        if (Storage::disk('public')->exists($path)) {
+            Storage::disk('public')->delete($path);
+            return;
+        }
+
+        $legacyPath = public_path('storage/' . $path);
+        if (is_file($legacyPath)) {
+            unlink($legacyPath);
+        }
     }
 
     // CRUD User: Manajemen user (admin, petugas, peminjam)

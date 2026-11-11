@@ -5,6 +5,7 @@ use App\Http\Controllers\AdminController;
 use App\Http\Controllers\PetugasController;
 use App\Http\Controllers\PeminjamController;
 use App\Http\Controllers\AuthController;
+use Illuminate\Support\Facades\Auth;
 
 Route::get('/', function () {
     return view('welcome');
@@ -105,6 +106,13 @@ Route::middleware(['auth', 'role:peminjam'])->prefix('peminjam')->name('peminjam
 Route::middleware('guest')->group(function () {
     Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login'); // <-- Tambahkan ->name('login')
     Route::post('/login', [AuthController::class, 'login']);                      // <-- Ubah ke Route::post
+    Route::get('/register', [AuthController::class, 'showRegistrationForm'])->name('register');
+    Route::post('/register', [AuthController::class, 'register']);
+});
+
+Route::middleware('auth')->group(function () {
+    Route::get('/profil', [AuthController::class, 'showProfile'])->name('profile.edit');
+    Route::put('/profil', [AuthController::class, 'updateProfile'])->name('profile.update');
 });
 
 // Route Logout

@@ -76,9 +76,9 @@
                             <div class="rounded-xl border border-slate-200 p-3.5 transition hover:bg-slate-50">
                                 <div class="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
                                     <div class="flex min-w-0 items-center gap-3">
-                                        @if($alat->gambar)
+                                        @if($alat->gambar_url)
                                             <img
-                                                src="{{ asset('storage/' . preg_replace('#^(?:public/)?storage/#', '', $alat->gambar)) }}"
+                                                src="{{ $alat->gambar_url }}"
                                                 alt="{{ $alat->nama_alat }}"
                                                 class="h-14 w-14 shrink-0 rounded-lg border border-slate-200 bg-white object-contain p-1"
                                             >

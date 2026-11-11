@@ -54,10 +54,10 @@
                     @forelse($alat as $item)
                         <tr class="hover:bg-gray-50 transition">
                             <td class="py-3 px-4 border-b">
-                                @if($item->gambar)
-                                    <img src="{{ asset($item->gambar) }}" alt="{{ $item->nama_alat }}" class="w-12 h-12 object-cover rounded-lg border">
+                                @if($item->gambar_url)
+                                    <img src="{{ $item->gambar_url }}" alt="{{ $item->nama_alat }}" class="w-12 h-12 object-cover rounded-lg border">
                                 @else
-                                    <span class="text-xs text-gray-400 italic">Tidak ada</span>
+                                    <span class="text-xs text-gray-400 italic">Foto belum tersedia</span>
                                 @endif
                             </td>
                             <td class="py-3 px-4 border-b font-medium text-gray-900">{{ $item->nama_alat }}</td>

@@ -166,6 +166,15 @@
                     <span class="font-semibold text-slate-200 text-sm">
                         {{ auth()->user()->name }}
                     </span>
+                    <a href="{{ route('profile.edit') }}"
+                        class="mt-3 flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition {{ request()->routeIs('profile.*') ? 'bg-slate-800/60 text-white' : 'text-slate-400 hover:bg-slate-800/40 hover:text-white' }}">
+                        <svg class="h-5 w-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                            <circle cx="12" cy="12" r="9" stroke-width="2"></circle>
+                            <circle cx="12" cy="9" r="3" stroke-width="2"></circle>
+                            <path stroke-linecap="round" stroke-width="2" d="M6.5 19a6 6 0 0111 0"></path>
+                        </svg>
+                        <span>Profil Saya</span>
+                    </a>
                 @endauth
             </div>
 
